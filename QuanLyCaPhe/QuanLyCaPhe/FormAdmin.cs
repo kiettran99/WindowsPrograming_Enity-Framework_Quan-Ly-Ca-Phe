@@ -15,14 +15,14 @@ namespace QuanLyCaPhe
     {
         #region Properties TabNhanVien
         DataTable dataTable = null;
-        NhanVien BLNV = new NhanVien();
-        ThucAn BLTA = new ThucAn();
-        ThucAn ta = null;
-        LoaiThucAn BTLTA = new LoaiThucAn();
-        BanAn BTLBA = new BanAn();
-        DangNhap BLDN = new DangNhap();
-        ChamCong BLCHC = new ChamCong();
-        TinhLuong BLTL = new TinhLuong();
+        BSNhanVien BLNV = new BSNhanVien();
+        BSThucAn BLTA = new BSThucAn();
+        BSThucAn ta = null;
+        BSLoaiThucAn BTLTA = new BSLoaiThucAn();
+        BSBanAn BTLBA = new BSBanAn();
+        BSDangNhap BLDN = new BSDangNhap();
+        BSChamCong BLCHC = new BSChamCong();
+        BSTinhLuong BLTL = new BSTinhLuong();
 
         string err;
         string tk, mk;
@@ -71,14 +71,14 @@ namespace QuanLyCaPhe
 
         private void LoadDanhThu()
         {
-            DanhThu dt = new DanhThu();
+            BSDanhThu dt = new BSDanhThu();
             dgvDanhThu.DataSource = dt.LayDanhThu(dtpNgayTaoHoaDon.Value, dtpNgayKetThucHoaDon.Value).Tables[0];
         }
 
 
         private void btnThongKe_Click(object sender, EventArgs e)
         {
-            DanhThu dt = new DanhThu();
+            BSDanhThu dt = new BSDanhThu();
             dgvDanhThu.DataSource = dt.LayDanhThu(dtpNgayTaoHoaDon.Value, dtpNgayKetThucHoaDon.Value).Tables[0];
         }
 
@@ -890,7 +890,7 @@ namespace QuanLyCaPhe
 
         }
 
-       
+
 
         private void txtFName_TextChanged(object sender, EventArgs e)
         {

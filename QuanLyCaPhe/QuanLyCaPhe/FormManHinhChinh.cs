@@ -14,11 +14,11 @@ namespace QuanLyCaPhe
     public partial class FormManHinhChinh : Form
     {
         string error;
-        BanAn banan = null;
-        ChiTietHoaDon chitiethd = null;
-        LoaiThucAn loaita = null;
-        ThucAn thucan = null;
-        HoaDon hoadon = null;
+        BSBanAn banan = null;
+        BSChiTietHoaDon chitiethd = null;
+        BSLoaiThucAn loaita = null;
+        BSThucAn thucan = null;
+        BSHoaDon hoadon = null;
         int idBan;
         float TongTienGoc = 0;
         //Biến Tĩnh Trạng Thái
@@ -27,11 +27,11 @@ namespace QuanLyCaPhe
         public FormManHinhChinh()
         {
             InitializeComponent();
-            banan = new BanAn();
-            chitiethd = new ChiTietHoaDon();
-            loaita = new LoaiThucAn();
-            thucan = new ThucAn();
-            hoadon = new HoaDon();
+            banan = new BSBanAn();
+            chitiethd = new BSChiTietHoaDon();
+            loaita = new BSLoaiThucAn();
+            thucan = new BSThucAn();
+            hoadon = new BSHoaDon();
         }
 
         #region Method
@@ -57,7 +57,7 @@ namespace QuanLyCaPhe
 
             foreach (Ban ban in lBanAn)
             {
-                Button btn = new Button() { Width = (int)BanAn.ChieuRongBan, Height = (int)BanAn.ChieuDaiBan };
+                Button btn = new Button() { Width = (int)BSBanAn.ChieuRongBan, Height = (int)BSBanAn.ChieuDaiBan };
                 btn.Text = ban.TenBan + Environment.NewLine + ban.TinhTrang;
                 btn.Click += Btn_Click;
                 btn.Tag = ban;
@@ -279,7 +279,7 @@ namespace QuanLyCaPhe
                         LoadTable();
                         HienThiHoaDon((dgvhoadon.Tag as Ban).Id);
                     }
-                }                
+                }
             }
             catch { }
         }

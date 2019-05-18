@@ -14,14 +14,14 @@ namespace QuanLyCaPhe
     public partial class FormKhachHang : Form
     {
         DataTable dt = null;
-        KhachHang kh = null;
+        BSKhachHang kh = null;
         bool them = false;
         string error;
 
         public FormKhachHang()
         {
             InitializeComponent();
-            kh = new KhachHang();
+            kh = new BSKhachHang();
             cbGioiTinh.SelectedIndex = 0;
         }
 

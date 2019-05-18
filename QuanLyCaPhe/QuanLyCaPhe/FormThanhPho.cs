@@ -14,7 +14,7 @@ namespace QuanLyCaPhe
     public partial class FormThanhPho : Form
     {
         DataTable dataTable = null;
-        ThanhPho TP = new ThanhPho();
+        BSThanhPho TP = new BSThanhPho();
         string err;
         public FormThanhPho()
         {
@@ -79,7 +79,7 @@ namespace QuanLyCaPhe
                 if (Them)
                 {
                     //thuc hiện lệnh
-                    ThanhPho TP = new ThanhPho();
+                    BSThanhPho TP = new BSThanhPho();
                     TP.ThemThanhPho(txtTenTP.Text.Trim(), ref err);
                     // Load lại DataGridView
                     LoadData();
@@ -89,7 +89,7 @@ namespace QuanLyCaPhe
                 else
                 {
                     //thuc hiện lệnh
-                    ThanhPho TP = new ThanhPho();
+                    BSThanhPho TP = new BSThanhPho();
                     int r = dgvThanhPho.CurrentCell.RowIndex;
                     TP.SuaThanhPho(txtTenTP.Text.Trim(), dgvThanhPho.Rows[r].Cells[0].Value.ToString(), ref err);
                     // Load lại DataGridView

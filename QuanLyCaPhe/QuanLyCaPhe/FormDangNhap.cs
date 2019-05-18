@@ -12,7 +12,7 @@ namespace QuanLyCaPhe
 {
     public partial class FormDangNhap : Form
     {
-        DangNhap DN = new DangNhap();
+        BSDangNhap DN = new BSDangNhap();
         string err;
         public static string MaNV;
 

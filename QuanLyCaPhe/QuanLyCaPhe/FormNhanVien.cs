@@ -14,7 +14,7 @@ namespace QuanLyCaPhe
     public partial class FormNhanVien : Form
     {
         DataTable dataTable = null;
-        NhanVien BLNV = new NhanVien();
+        BSNhanVien BLNV = new BSNhanVien();
         string err;
         string tk, mk;
         public FormNhanVien()
@@ -96,7 +96,7 @@ namespace QuanLyCaPhe
         {
 
             //thuc hiện lệnh
-            NhanVien blnv = new NhanVien();
+            BSNhanVien blnv = new BSNhanVien();
             if (FormDangNhap.MaNV != txtMaNV.Text.Trim())
                 MessageBox.Show("Bạn không đủ quyền để thay đổi thông tin của người khác", "Thông báo",MessageBoxButtons.OKCancel ,MessageBoxIcon.Error);
            else blnv.SuaNhanVien(FormDangNhap.MaNV, txtHoNV.Text.Trim(), txtTenNV.Text.Trim(), rdbNu.Checked, dtbNgayNV.Value,
