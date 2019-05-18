@@ -272,4 +272,4 @@ select * from ChiTietHoaDon
 select * from HoaDon
 
 delete from ChiTietHoaDon where IDThucAn = 7 and IDHoaDon = (select IDHoaDon from HoaDon where IDBanAn = 6 and HoaDon.TinhTrang = 0) 
-
+select * from ChamCong

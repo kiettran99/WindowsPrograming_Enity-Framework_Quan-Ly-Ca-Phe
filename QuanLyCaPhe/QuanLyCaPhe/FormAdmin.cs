@@ -310,8 +310,7 @@ namespace QuanLyCaPhe
             {
                 dataTable = new DataTable();
                 dataTable.Clear();
-                DataSet ds = BTLBA.LayBanAn();
-                dataTable = ds.Tables[0];
+                dataTable = BTLBA.LayBanAn();
                 // đưa dữ liệu vào dataGridView
                 dgvBanAn.DataSource = dataTable;
             }

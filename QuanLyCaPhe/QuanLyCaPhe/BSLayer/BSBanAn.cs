@@ -23,9 +23,9 @@ namespace QuanLyCaPhe.BSLayer
         {
             List<Ban> lBanAn = new List<Ban>();
 
-            DataSet dt = db.ExecuteQueryDataSet("select * from BanAn", CommandType.Text);
+            DataTable dt = LayBanAn();
 
-            foreach (DataRow dr in dt.Tables[0].Rows)
+            foreach (DataRow dr in dt.Rows)
             {
                 Ban b = new Ban(dr);
                 lBanAn.Add(b);
@@ -34,9 +34,23 @@ namespace QuanLyCaPhe.BSLayer
             return lBanAn;
         }
 
-        public DataSet LayBanAn()
+        public DataTable LayBanAn()
         {
-            return db.ExecuteQueryDataSet("select * from BanAn", CommandType.Text);
+            QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+            var ba = from b in qlcp.BanAns
+                     select b;
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("IDBanAn");
+            dt.Columns.Add("TenBan");
+            dt.Columns.Add("TinhTrang");
+
+            foreach (var b in qlcp.BanAns)
+            {
+                dt.Rows.Add(b.IDBanAn, b.TenBan, b.TinhTrang);
+            }
+
+            return dt;
         }
 
         public void ThayDoiTinhTrang(int idBan, bool b, ref string error)
@@ -45,44 +59,100 @@ namespace QuanLyCaPhe.BSLayer
             if (b) strSQL = $"update BanAn set TinhTrang = N'Đã có người' where IDBanAn = {idBan}";
             else strSQL = $"update BanAn set TinhTrang = N'Trống' where IDBanAn = {idBan}";
             db.MyExecuteNonQuery(strSQL, CommandType.Text, ref error);
+
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                var ba = (from ban in qlcp.BanAns
+                          where ban.IDBanAn == idBan
+                          select ban).SingleOrDefault();
+
+                if (b)
+                {
+                    if (ba != null) ba.TinhTrang = "Đã có người";
+                }
+                else
+                {
+                    if (ba != null) ba.TinhTrang = "Trống";
+                }
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+            }
         }
 
         public bool ThemBanAn(string MaBan, string TenBan, string TinhTrang, ref string error)
         {
-            string sqlString;
             try
             {
-                sqlString = $"Insert into BanAn values('{MaBan.Trim()}', N'{TenBan.Trim()}',N'{TinhTrang.Trim()}')";
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                BanAn banAn = new BanAn();
+                banAn.IDBanAn = int.Parse(MaBan);
+                banAn.TenBan = TenBan;
+                banAn.TinhTrang = TinhTrang;
+
+                qlcp.BanAns.Add(banAn);
+
+                qlcp.SaveChanges();
+
+                return true;
             }
-            catch
+            catch (Exception err)
             {
-                error = "Thêm không được";
+                error = err.Message;
                 return false;
             }
-            error = "Thêm thành công";
-            return db.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
 
         public bool SuaBanAn(string MaBan, string TenBan, string TinhTrang, ref string error)
         {
-            string sqlString;
             try
             {
-                sqlString = $"Update BanAn Set TenBan = '{TenBan}', TinhTrang = N'{TinhTrang}' where IDBanAn = '{MaBan}' ";
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                var ba = (from b in qlcp.BanAns
+                          where b.IDBanAn == int.Parse(MaBan)
+                          select b).SingleOrDefault();
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (ba != null)
+                {
+                    ba.TenBan = TenBan;
+                    ba.TinhTrang = TinhTrang;
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
+                return true;
+
             }
-            catch
+            catch (Exception err)
             {
-                error = "Sửa không được";
+                error = err.Message;
                 return false;
             }
-            error = "Sửa thành công";
-            return db.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
 
         public bool XoaBanAn(string MaBan, ref string error)
         {
-            string sqlString = $"delete from BanAn where IDBanAn = '{MaBan}'";
-            return db.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                BanAn ba = new BanAn();
+                ba.IDBanAn = int.Parse(MaBan);
+
+                qlcp.BanAns.Attach(ba);
+                qlcp.BanAns.Remove(ba);
+
+                qlcp.SaveChanges();
+
+                return true;
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
+
         }
 
     }
@@ -148,9 +218,9 @@ namespace QuanLyCaPhe.BSLayer
 
         public Ban(DataRow row)
         {
-            this.id = (int)row["IDBanAn"];
-            this.tenBan = row["TenBan"].ToString();
-            this.tinhTrang = row["TinhTrang"].ToString();
+            this.id = int.Parse(row.ItemArray[0].ToString());
+            this.tenBan = row.ItemArray[1].ToString();
+            this.tinhTrang = row.ItemArray[2].ToString();
         }
 
     }

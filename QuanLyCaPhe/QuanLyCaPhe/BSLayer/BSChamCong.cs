@@ -18,7 +18,15 @@ namespace QuanLyCaPhe.BSLayer
         }
         public DataSet LayTT()
         {
-            return dbMain.ExecuteQueryDataSet("select * from ChamCong", CommandType.Text);
+            QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+            var chamcong = (from ccong in qlcp.ChamCongs
+                            select ccong);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MaNV");
+            dt.Columns.Add("")
+
         }
         public bool ThemNhanVien(string MaNV,  string TenNV, ref string error)
         {
