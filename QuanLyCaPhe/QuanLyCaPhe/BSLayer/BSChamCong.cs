@@ -16,7 +16,7 @@ namespace QuanLyCaPhe.BSLayer
         {
             dbMain = new DBMain();
         }
-        public DataSet LayTT()
+        public DataTable LayTT()
         {
             QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
 
@@ -25,45 +25,120 @@ namespace QuanLyCaPhe.BSLayer
 
             DataTable dt = new DataTable();
             dt.Columns.Add("MaNV");
-            dt.Columns.Add("")
+            dt.Columns.Add("TenNV");
+            dt.Columns.Add("GioIn");
+            dt.Columns.Add("GioOut");
 
+            foreach (var ccong in chamcong)
+            {
+                dt.Rows.Add(ccong.MaNV, ccong.TenNV, ccong.GioIn, ccong.GioOut);
+            }
+
+            return dt;
         }
         public bool ThemNhanVien(string MaNV,  string TenNV, ref string error)
-        {
-            string sqlString;           
-            sqlString = $"Insert into ChamCong values('{MaNV}', N'{TenNV}',N'{0:0:0}',N'{0:0:0}')";          
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
+        {         
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+                ChamCong chamcong = new ChamCong();
+
+                chamcong.MaNV = int.Parse(MaNV);
+                chamcong.TenNV = TenNV;
+                chamcong.GioIn = TimeSpan.Zero;
+                chamcong.GioOut = TimeSpan.Zero;
+
+                qlcp.ChamCongs.Add(chamcong);
+                qlcp.SaveChanges();
+
+                return true;
+            }
+            catch(Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
+
         }
 
         public bool XoaNhanVien(string MaNV, ref string error)
         {
-            string sqlString = $"delete from ChamCong where MaNV = '{MaNV}'";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+                ChamCong chamcong = new ChamCong();
+                chamcong.MaNV = int.Parse(MaNV);
+
+                qlcp.ChamCongs.Attach(chamcong);
+                qlcp.ChamCongs.Remove(chamcong);
+
+                qlcp.SaveChanges();
+
+                return true;
+            }
+            catch(Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
+          
         }
 
         public bool ChamCongNhanVien(string MaNV, TimeSpan timein,TimeSpan timeout,  ref string error)
         {
-            
-            string sqlString;
             try
             {
-                sqlString = "Update ChamCong Set GioIn=N'" + timein + "',GioOut=N'" + timeout +"' Where MaNV= '" + MaNV + "'";
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                int idnv = int.Parse(MaNV);
+                var chamcong = (from ccong in qlcp.ChamCongs
+                                where ccong.MaNV == idnv
+                                select ccong).SingleOrDefault();
+
+                if (chamcong != null)
+                {
+                    chamcong.GioIn = timein;
+                    chamcong.GioOut = timeout;
+                    qlcp.SaveChanges();
+                }
+
+                return true;
             }
-            catch (SqlException)
+            catch (Exception err)
             {
-                error = "Sửa không được";
+                error = err.Message;
                 return false;
             }
-            error = "Sửa thành công";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
-        public bool BoChamCong(string MaNV,ref string err)
+
+        public bool BoChamCong(string MaNV,ref string error)
         {
             TimeSpan time = new TimeSpan();
             time = TimeSpan.Zero;
-            string sqlString = "Update ChamCong Set GioIn=N'" + time + "',GioOut=N'" + time + "' Where MaNV= '" + MaNV + "'";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref err);
-        }
-      
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                int idnv = int.Parse(MaNV);
+
+                var chamcong = (from ccong in qlcp.ChamCongs
+                               where ccong.MaNV == idnv
+                               select ccong).SingleOrDefault();
+
+                if (chamcong != null)
+                {
+                    chamcong.GioIn = time;
+                    chamcong.GioOut = time;
+                    qlcp.SaveChanges();
+                }
+
+                return true;
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+                return false;
+            }      
+        }     
     }
 }

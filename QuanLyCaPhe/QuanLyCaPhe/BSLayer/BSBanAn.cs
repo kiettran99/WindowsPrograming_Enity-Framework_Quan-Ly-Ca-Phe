@@ -55,10 +55,10 @@ namespace QuanLyCaPhe.BSLayer
 
         public void ThayDoiTinhTrang(int idBan, bool b, ref string error)
         {
-            string strSQL = "";
-            if (b) strSQL = $"update BanAn set TinhTrang = N'Đã có người' where IDBanAn = {idBan}";
-            else strSQL = $"update BanAn set TinhTrang = N'Trống' where IDBanAn = {idBan}";
-            db.MyExecuteNonQuery(strSQL, CommandType.Text, ref error);
+            //string strSQL = "";
+            //if (b) strSQL = $"update BanAn set TinhTrang = N'Đã có người' where IDBanAn = {idBan}";
+            //else strSQL = $"update BanAn set TinhTrang = N'Trống' where IDBanAn = {idBan}";
+            //db.MyExecuteNonQuery(strSQL, CommandType.Text, ref error);
 
             try
             {
@@ -69,11 +69,19 @@ namespace QuanLyCaPhe.BSLayer
 
                 if (b)
                 {
-                    if (ba != null) ba.TinhTrang = "Đã có người";
+                    if (ba != null)
+                    {
+                        ba.TinhTrang = "Đã có người";
+                        qlcp.SaveChanges();
+                    }
                 }
                 else
                 {
-                    if (ba != null) ba.TinhTrang = "Trống";
+                    if (ba != null)
+                    {
+                        ba.TinhTrang = "Trống";
+                        qlcp.SaveChanges();
+                    }
                 }
             }
             catch (Exception err)
@@ -111,8 +119,9 @@ namespace QuanLyCaPhe.BSLayer
             {
                 QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
                 //Lấy địa chỉ của đối tượng có MaBan
+                int idBa = int.Parse(MaBan);
                 var ba = (from b in qlcp.BanAns
-                          where b.IDBanAn == int.Parse(MaBan)
+                          where b.IDBanAn == idBa
                           select b).SingleOrDefault();
                 //Khi không tìm thấy đối tượng không cần sửa.
                 if (ba != null)
@@ -137,14 +146,18 @@ namespace QuanLyCaPhe.BSLayer
             try
             {
                 QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
-                BanAn ba = new BanAn();
-                ba.IDBanAn = int.Parse(MaBan);
-
-                qlcp.BanAns.Attach(ba);
-                qlcp.BanAns.Remove(ba);
-
-                qlcp.SaveChanges();
-
+                int maban = int.Parse(MaBan);
+                //Lấy địa chỉ của đối tượng có MaBan
+                var ba = (from b in qlcp.BanAns
+                          where b.IDBanAn == maban
+                          select b).SingleOrDefault();
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (ba != null)
+                {
+                    qlcp.BanAns.Remove(ba);
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
                 return true;
             }
             catch (Exception err)
@@ -152,7 +165,6 @@ namespace QuanLyCaPhe.BSLayer
                 error = err.Message;
                 return false;
             }
-
         }
 
     }

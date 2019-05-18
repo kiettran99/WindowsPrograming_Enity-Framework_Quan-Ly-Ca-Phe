@@ -16,60 +16,103 @@ namespace QuanLyCaPhe.BSLayer
             dbMain = new DBMain();
         }
 
-        public DataSet LayThanhPho()
+        public DataTable LayThanhPho()
         {
-            return dbMain.ExecuteQueryDataSet("select *from ThanhPho", CommandType.Text);
+            QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+            var dstp = from tp in qlcp.ThanhPhoes
+                       select tp;
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MaThanhPho");
+            dt.Columns.Add("TenThanhPho");
+
+            foreach (var tp in dstp)
+            {
+                dt.Rows.Add(tp.MaThanhPho, tp.TenThanhPho);
+            }
+
+            return dt;
         }
+
         public bool ThemThanhPho(string TenTP, ref string error)
         {
             Random rd = new Random();
             int num ;
-            num = rd.Next(10, 100);
-            string sqlString;
+            num = rd.Next(10, 1000);
+
             try
             {
-                sqlString = "Insert Into ThanhPho Values(" + "N'" + num + "',N'" + TenTP +  "')";
-                
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+                ThanhPho tp = new ThanhPho();
+                tp.MaThanhPho = num;
+                tp.TenThanhPho = TenTP;
+
+                qlcp.ThanhPhoes.Add(tp);
+
+                qlcp.SaveChanges();
+
+                return true;
             }
-            catch (SqlException err)
+            catch (Exception err)
             {
                 error = err.Message;
                 return false;
             }
-            error = "Thêm thành công";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
 
         public bool SuaThanhPho(string TenTP,string MaTP, ref string error)
         {
-            string sqlString;
             try
             {
-                sqlString = "Update ThanhPho Set TenThanhPho=N'" + TenTP + "' Where MaThanhPho= '" + MaTP + "'";
+                int maTP = int.Parse(MaTP);
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                var thanhpho = (from tp in qlcp.ThanhPhoes
+                          where tp.MaThanhPho == maTP
+                          select tp).SingleOrDefault();
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (thanhpho != null)
+                {
+                    thanhpho.TenThanhPho = TenTP;              
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
+                return true;
+
             }
-            catch (SqlException err)
+            catch (Exception err)
             {
                 error = err.Message;
                 return false;
             }
-            error = "Sửa thành công";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
 
         public bool Xoa(ref string error, string MaTP)
         {
-            string sqlString;
             try
             {
-                sqlString = "Delete From ThanhPho Where MaThanhPho='" + MaTP + "'";
+                int maTP = int.Parse(MaTP);
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                var thanhpho = (from tp in qlcp.ThanhPhoes
+                                where tp.MaThanhPho == maTP
+                                select tp).SingleOrDefault();
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (thanhpho != null)
+                {
+                    qlcp.ThanhPhoes.Remove(thanhpho);
+                    qlcp.SaveChanges();
+                }
+                return true;
+
             }
-            catch (SqlException err)
+            catch (Exception err)
             {
                 error = err.Message;
                 return false;
             }
-            error = "Xóa thành công";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
 
     }

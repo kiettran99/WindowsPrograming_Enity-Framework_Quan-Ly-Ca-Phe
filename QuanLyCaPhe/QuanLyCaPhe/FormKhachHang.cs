@@ -29,11 +29,7 @@ namespace QuanLyCaPhe
         {
             try
             {
-
-                dt = new DataTable();
-                dt.Clear();
-                DataSet ds = kh.LayKhachHang();
-                dt = ds.Tables[0];
+                DataTable dt = kh.LayKhachHang();
                 DgvKH.DataSource = dt;
 
                 tbTen.ResetText();

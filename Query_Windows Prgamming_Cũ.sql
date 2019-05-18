@@ -268,8 +268,4 @@ insert into DangNhap values('admin', 'admin', 0);
 insert into DangNhap values('nv1', 'nv1', 1);
 insert into NhanVien values(1, 'Nguyen Xuan', 'Huy', 0, '1997-12-05', '0904567841', '92 Hai Ba Trung Ho Chi Minh', '2018-12-14' )
 
-select * from ChiTietHoaDon
-select * from HoaDon
-
-delete from ChiTietHoaDon where IDThucAn = 7 and IDHoaDon = (select IDHoaDon from HoaDon where IDBanAn = 6 and HoaDon.TinhTrang = 0) 
-select * from ChamCong
+select * from ThucAn join LoaiThucAn on ThucAn.IDLoaiThucAn = LoaiThucAn.IDLoaiThucAn

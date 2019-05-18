@@ -72,14 +72,14 @@ namespace QuanLyCaPhe
         private void LoadDanhThu()
         {
             BSDanhThu dt = new BSDanhThu();
-            dgvDanhThu.DataSource = dt.LayDanhThu(dtpNgayTaoHoaDon.Value, dtpNgayKetThucHoaDon.Value).Tables[0];
+            dgvDanhThu.DataSource = dt.LayDanhThu(dtpNgayTaoHoaDon.Value, dtpNgayKetThucHoaDon.Value);
         }
 
 
         private void btnThongKe_Click(object sender, EventArgs e)
         {
             BSDanhThu dt = new BSDanhThu();
-            dgvDanhThu.DataSource = dt.LayDanhThu(dtpNgayTaoHoaDon.Value, dtpNgayKetThucHoaDon.Value).Tables[0];
+            dgvDanhThu.DataSource = dt.LayDanhThu(dtpNgayTaoHoaDon.Value, dtpNgayKetThucHoaDon.Value);
         }
 
         #endregion
@@ -186,12 +186,9 @@ namespace QuanLyCaPhe
         {
             try
             {
-                dataTable = new DataTable();
-                dataTable.Clear();
-                DataSet ds = BTLTA.LayDanhMuc();
-                dataTable = ds.Tables[0];
+                DataTable dt = BTLTA.LayDanhMuc();
                 // đưa dữ liệu vào dataGridView
-                dgvDanhMuc.DataSource = dataTable;
+                dgvDanhMuc.DataSource = dt;
             }
             catch (Exception errr)
             {
@@ -441,10 +438,11 @@ namespace QuanLyCaPhe
             {
                 dataTable = new DataTable();
                 dataTable.Clear();
-                DataSet ds = BLDN.LayTK();
-                dataTable = ds.Tables[0];
+                dataTable = BLDN.LayTK();
                 // đưa dữ liệu vào dataGridView
                 dgvTK.DataSource = dataTable;
+                // txtMaNVTK.Text = FormDangNhap.MaNV;
+                txtMaNVTK.Text = 2.ToString();
             }
             catch (Exception errr)
             {
@@ -541,10 +539,7 @@ namespace QuanLyCaPhe
         {
             try
             {
-                dataTable = new DataTable();
-                dataTable.Clear();
-                DataSet ds = BLNV.LayNhanVien();
-                dataTable = ds.Tables[0];
+                DataTable dt = BLNV.LayNhanVien();
                 // đưa dữ liệu vào dataGridView
                 dgvNhanVien.DataSource = dataTable;
             }
@@ -573,12 +568,9 @@ namespace QuanLyCaPhe
         {
             try
             {
-                dataTable = new DataTable();
-                dataTable.Clear();
-                DataSet ds = BLTA.LayThucAn();
-                dataTable = ds.Tables[0];
+                DataTable dt = BLTA.LayThucAn();
                 // đưa dữ liệu vào dataGridView
-                dgvThucAn.DataSource = dataTable;
+                dgvThucAn.DataSource = dt;
             }
             catch (Exception errr)
             {
@@ -705,8 +697,7 @@ namespace QuanLyCaPhe
             {
                 dataTable = new DataTable();
                 dataTable.Clear();
-                DataSet ds = BLCHC.LayTT();
-                dataTable = ds.Tables[0];
+                dataTable = BLCHC.LayTT();
                 // đưa dữ liệu vào dataGridView
                 dgvChamCong.DataSource = dataTable;
             }
@@ -802,12 +793,9 @@ namespace QuanLyCaPhe
         {
             try
             {
-                dataTable = new DataTable();
-                dataTable.Clear();
-                DataSet ds = BLTL.LayTTTL();
-                dataTable = ds.Tables[0];
+                DataTable ds = BLTL.LayTTTL();
                 // đưa dữ liệu vào dataGridView
-                dgvTinhLuong.DataSource = dataTable;
+                dgvTinhLuong.DataSource = ds;
             }
             catch (Exception errr)
             {
@@ -865,7 +853,7 @@ namespace QuanLyCaPhe
 
         private void btnTimkimF_Click(object sender, EventArgs e)
         {
-            dgvThucAn.DataSource = BLTA.TimKimF(txtSFname.Text).Tables[0];
+            dgvThucAn.DataSource = BLTA.TimKimF(txtSFname.Text);
         }
         #endregion
 

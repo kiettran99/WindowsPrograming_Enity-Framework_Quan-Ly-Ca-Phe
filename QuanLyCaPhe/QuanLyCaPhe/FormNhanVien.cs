@@ -20,48 +20,45 @@ namespace QuanLyCaPhe
         public FormNhanVien()
         {
             InitializeComponent();
-            
+
         }
         void LoadData()
         {
 
-           
-                try
-                {
-                    dataTable = new DataTable();
-                    dataTable.Clear();
-                    DataSet ds = BLNV.LayNhanVien();
-                    dataTable = ds.Tables[0];
-                    // đưa dữ liệu vào dataGridView
-                    dgvNhanVien.DataSource = dataTable;
-                    
-                }
-                catch(SqlException errr)
-                {
-                    MessageBox.Show(errr.Message);
-                }
-                txtMaNV.ResetText();
-                txtTenNV.ResetText();
-                txtHoNV.ResetText();
-                txtDiaChi.ResetText();
-                txtDienThoai.ResetText();
-                txtHoNV.ResetText();
-                dtbNgayNV.ResetText();
-                dtbNgaySinh.ResetText();
-                // không cho thao tác trên các nút lưu/hủy
-                btnHuy.Enabled = false;
-                btnLuu.Enabled = false;              
-                // cho phép thao tác trên thêm/sửa/xóa/thoát               
-                btnSua.Enabled = true;
-                                          
+
+            try
+            {
+                DataTable dt = BLNV.LayNhanVien();
+                // đưa dữ liệu vào dataGridView
+                dgvNhanVien.DataSource = dt;
+
+            }
+            catch (SqlException errr)
+            {
+                MessageBox.Show(errr.Message);
+            }
+            txtMaNV.ResetText();
+            txtTenNV.ResetText();
+            txtHoNV.ResetText();
+            txtDiaChi.ResetText();
+            txtDienThoai.ResetText();
+            txtHoNV.ResetText();
+            dtbNgayNV.ResetText();
+            dtbNgaySinh.ResetText();
+            // không cho thao tác trên các nút lưu/hủy
+            btnHuy.Enabled = false;
+            btnLuu.Enabled = false;
+            // cho phép thao tác trên thêm/sửa/xóa/thoát               
+            btnSua.Enabled = true;
+
         }
-       
-       
+
+
 
         private void btnReLoad_Click(object sender, EventArgs e)
         {
             LoadData();
-            
+
         }
 
         private void FormNhanVien_Load(object sender, EventArgs e)
@@ -98,9 +95,9 @@ namespace QuanLyCaPhe
             //thuc hiện lệnh
             BSNhanVien blnv = new BSNhanVien();
             if (FormDangNhap.MaNV != txtMaNV.Text.Trim())
-                MessageBox.Show("Bạn không đủ quyền để thay đổi thông tin của người khác", "Thông báo",MessageBoxButtons.OKCancel ,MessageBoxIcon.Error);
-           else blnv.SuaNhanVien(FormDangNhap.MaNV, txtHoNV.Text.Trim(), txtTenNV.Text.Trim(), rdbNu.Checked, dtbNgayNV.Value,
-                dtbNgaySinh.Value, txtDiaChi.Text.Trim(), txtDienThoai.Text.Trim(), ref err);
+                MessageBox.Show("Bạn không đủ quyền để thay đổi thông tin của người khác", "Thông báo", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+            else blnv.SuaNhanVien(FormDangNhap.MaNV, txtHoNV.Text.Trim(), txtTenNV.Text.Trim(), rdbNu.Checked, dtbNgayNV.Value,
+                 dtbNgaySinh.Value, txtDiaChi.Text.Trim(), txtDienThoai.Text.Trim(), ref err);
             // Load lại DataGridView
             LoadData();
             // THông Báo
@@ -110,7 +107,7 @@ namespace QuanLyCaPhe
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-           
+
             btnSua.Enabled = false;
 
             btnReLoad.Enabled = false;
@@ -130,14 +127,14 @@ namespace QuanLyCaPhe
             dtbNgaySinh.ResetText();
 
             dgvNhanVien_CellClick(null, null);
-        }       
+        }
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
             dgvNhanVien_CellClick(null, null);
-            
+
             btnSua.Enabled = true;
-         
+
             btnThoat.Enabled = true;
             btnLuu.Enabled = false;
             btnHuy.Enabled = false;
@@ -154,6 +151,6 @@ namespace QuanLyCaPhe
             }
         }
 
-       
+
     }
 }

@@ -24,12 +24,8 @@ namespace QuanLyCaPhe
         {
             try
             {
-
-                dataTable = new DataTable();
-                dataTable.Clear();
-                DataSet ds = TP.LayThanhPho();
-                dataTable = ds.Tables[0];
-                dgvThanhPho.DataSource = dataTable;
+                DataTable dt = TP.LayThanhPho();
+                dgvThanhPho.DataSource = dt;
 
             }
             catch(SqlException errr)

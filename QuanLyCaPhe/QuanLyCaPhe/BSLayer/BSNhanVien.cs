@@ -17,56 +17,140 @@ namespace QuanLyCaPhe.BSLayer
             dbMain = new DBMain();
         }
 
-        public DataSet LayNhanVien()
+        public DataTable LayNhanVien()
         {
-            return dbMain.ExecuteQueryDataSet("select *from NhanVien", CommandType.Text);
+            QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+            var dsnv = from nv in qlcp.NhanViens
+                       select nv;
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MaNV");
+            dt.Columns.Add("HoNV");
+            dt.Columns.Add("TenNV");
+            dt.Columns.Add("Nu");
+            dt.Columns.Add("NgaySinh");
+            dt.Columns.Add("SDT");
+            dt.Columns.Add("DiaChi");
+            dt.Columns.Add("NgayBD");
+
+            foreach (var nv in dsnv)
+            {
+                dt.Rows.Add(nv.MaNV, nv.HoNV, nv.TenNV, nv.Nu, nv.NgaySinh, nv.SDT, nv.DiaChi, nv.NgayBD);
+            }
+
+            return dt;
+
         }
+
         public bool SuaNhanVien(string MaNV, string Ho, string TenNV, bool Nu, DateTime NgayNV, DateTime NgaySinh, string DiaChi, string SDT, ref string error)
         {
-            string sqlString;
             try
             {
-                sqlString = "Update NhanVien Set HoNV=N'" + Ho + "',TenNV=N'" + TenNV +
-                "',Nu='" + Nu + "',NgayBD='" + NgayNV + "',NgaySinh='" + NgaySinh +
-                "',DiaChi=N'" + DiaChi + "',SDT='" + SDT + "' Where MaNV= '" + MaNV + "'";
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                int idnv = int.Parse(MaNV);
+                var nhanvien = (from nv in qlcp.NhanViens
+                                where nv.MaNV == idnv
+                                select nv).SingleOrDefault();
+
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (nhanvien != null)
+                {
+                    nhanvien.HoNV = Ho;
+                    nhanvien.TenNV = TenNV;
+                    nhanvien.Nu = Nu;
+                    nhanvien.NgaySinh = NgaySinh;
+                    nhanvien.SDT = SDT;
+                    nhanvien.DiaChi = DiaChi;
+                    nhanvien.NgayBD = NgayNV;
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
+                return true;
+
             }
-            catch (SqlException)
+            catch (Exception err)
             {
-                error = "Sửa không được";
+                error = err.Message;
                 return false;
             }
-            error = "Sửa thành công";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
         public void LayTKMK(string MaNV, ref string TK, ref string MK)
         {
-            string sqlString;
-            sqlString = "Select TaiKhoan From DangNhap where MaNV = N'" + MaNV + "'";
-            dbMain.LayMa(sqlString, CommandType.Text, ref TK);
-            sqlString = "Select MatKhau From DangNhap where MaNV=N'" + MaNV + "'";
-            dbMain.LayMa(sqlString, CommandType.Text, ref MK);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                int idnv = int.Parse(MaNV);
+                var dangnhap = (from dn in qlcp.DangNhaps
+                                where dn.MaNV == idnv
+                                select new { dn.TaiKhoan, dn.MatKhau }).SingleOrDefault();
+                TK = dangnhap.TaiKhoan;
+                MK = dangnhap.MatKhau;
+            }
+            catch
+            {
+
+            }
         }
 
         public bool ThemNhanVien(string MaNV, string Ho, string TenNV, bool Nu, DateTime NgayNV, DateTime NgaySinh, string DiaChi, string SDT, ref string error)
         {
-            string sqlString;
             try
             {
-                sqlString = $"Insert into NhanVien values('{MaNV.Trim()}', N'{Ho.Trim()}', N'{TenNV.Trim()}', N'{Nu}', N'{NgaySinh.ToShortDateString()}', N'{SDT.Trim()}', N'{DiaChi.Trim()}', N'{NgayNV.ToString()}')";
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                int idnv = int.Parse(MaNV);
+
+                NhanVien nhanvien = new NhanVien();
+                nhanvien.MaNV = idnv;
+                nhanvien.HoNV = Ho;
+                nhanvien.TenNV = TenNV;
+                nhanvien.Nu = Nu;
+                nhanvien.NgaySinh = NgaySinh;
+                nhanvien.SDT = SDT;
+                nhanvien.DiaChi = DiaChi;
+                nhanvien.NgayBD = NgayNV;
+
+                qlcp.NhanViens.Add(nhanvien);
+                qlcp.SaveChanges();
+                return true;
+
             }
-            catch (SqlException)
+            catch (Exception err)
             {
-                error = "Thêm không được";
+                error = err.Message;
                 return false;
             }
-            error = "Thêm thành công";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
         }
 
         public bool XoaNhanVien(string MaNV, ref string error)
         {
-            string sqlString = $"delete from NhanVien where MaNV = '{MaNV}'";
-            return dbMain.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                //Lấy địa chỉ của đối tượng có MaBan
+                int idnv = int.Parse(MaNV);
+                var nhanvien = (from nv in qlcp.NhanViens
+                                where nv.MaNV == idnv
+                                select nv).SingleOrDefault();
+
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (nhanvien != null)
+                {
+                    qlcp.NhanViens.Remove(nhanvien);
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
+                return true;
+
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
         }
     }
 }

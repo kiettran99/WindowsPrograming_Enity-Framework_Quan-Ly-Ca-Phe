@@ -17,28 +17,110 @@ namespace QuanLyCaPhe.BSLayer
             db = new DBMain();
         }
 
-        public DataSet LayKhachHang()
+        public DataTable LayKhachHang()
         {
-            string strSQL = "select * from KhachHang";
-            return db.ExecuteQueryDataSet(strSQL, CommandType.Text);
+            QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+            var kh = from b in qlcp.KhachHangs
+                     select b;
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("MaKh");
+            dt.Columns.Add("HoKH");
+            dt.Columns.Add("TenKH");
+            dt.Columns.Add("GioiTinh");
+            dt.Columns.Add("NgaySinh");
+            dt.Columns.Add("SDT");
+            dt.Columns.Add("DiaChi");
+
+            foreach (var b in qlcp.KhachHangs)
+            {
+                dt.Rows.Add(b.MaKH, b.HoKH, b.TenKH, b.GioiTinh, b.NgaySinh, b.SDT, b.DiaChi);
+            }
+
+            return dt;
         }
 
         public bool ThemKhachHang(string maKhachHang, string hoKhachHang, string tenKhachHang, string soDienThoai, string diachi, string gioiTinh, DateTime ngaySinh, ref string error)
         {
-            string strSQL = $"insert into KhachHang values('{maKhachHang.Trim()}', '{hoKhachHang.Trim()}', '{tenKhachHang.Trim()}', '{gioiTinh.Trim()}','{ngaySinh.ToShortDateString()}', '{soDienThoai.Trim()}', '{diachi.Trim()}')";
-            return db.MyExecuteNonQuery(strSQL, CommandType.Text, ref error);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                KhachHang kh = new KhachHang();
+                kh.MaKH = int.Parse(maKhachHang);
+                kh.HoKH = hoKhachHang;
+                kh.TenKH = tenKhachHang;
+                kh.SDT = soDienThoai;
+                kh.DiaChi = diachi;
+
+                qlcp.KhachHangs.Add(kh);
+
+                qlcp.SaveChanges();
+
+                return true;
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
         }
 
         public bool SuaKhachHang(string maKhachhang, string hoKhachHang, string tenKhachHang, string soDienThoai, string diachi, string gioiTinh, DateTime ngaySinh, ref string error)
         {
-            string strSQL = $"update KhachHang set HoKH = '{hoKhachHang}', TenKH = '{tenKhachHang}', GioiTinh = '{gioiTinh}', NgaySinh = '{ngaySinh.ToShortDateString()}', SDT = '{soDienThoai}', DiaChi = '{diachi}' where MAKH = '{maKhachhang}'";
-            return db.MyExecuteNonQuery(strSQL, CommandType.Text, ref error);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                int makh = int.Parse(maKhachhang);
+                //Lấy địa chỉ của đối tượng có MaBan
+                var kh = (from b in qlcp.KhachHangs
+                          where b.MaKH == makh
+                          select b).SingleOrDefault();
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (kh != null)
+                {
+                    kh.MaKH = int.Parse(maKhachhang);
+                    kh.HoKH = hoKhachHang;
+                    kh.TenKH = tenKhachHang;
+                    kh.SDT = soDienThoai;
+                    kh.DiaChi = diachi;
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
+                return true;
+
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
         }
 
         public bool XoaKhachHang(string MaKhachHang, ref string error)
         {
-            string sqlString = "Delete From KhachHang Where MaKH='" + MaKhachHang + "'";
-            return db.MyExecuteNonQuery(sqlString, CommandType.Text, ref error);
+            try
+            {
+                QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+                int makh = int.Parse(MaKhachHang);
+
+                var kh = (from b in qlcp.KhachHangs
+                          where b.MaKH == makh         
+                          select b).SingleOrDefault();
+                //Khi không tìm thấy đối tượng không cần sửa.
+                if (kh != null)
+                {
+                    qlcp.KhachHangs.Remove(kh);
+                    //Cập nhật
+                    qlcp.SaveChanges();
+                }
+                return true;
+
+            }
+            catch (Exception err)
+            {
+                error = err.Message;
+                return false;
+            }
         }
     }
 }

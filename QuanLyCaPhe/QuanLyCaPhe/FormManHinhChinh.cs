@@ -39,14 +39,14 @@ namespace QuanLyCaPhe
         private void LoadCategory()
         {
             //Load dữ liệu combobox
-            cmbdanhmucmonan.DataSource = loaita.LayLoaiThucAn().Tables[0];
+            cmbdanhmucmonan.DataSource = loaita.LayLoaiThucAn();
             cmbdanhmucmonan.DisplayMember = "TenLoaiThucAn";
         }
 
         private void LoadFoodByCategory(string tenLoaiThucAn)
         {
             //cmbdanhmucmonan.GetItemText(cmbdanhmucmonan.SelectedItem)
-            cmbmonan.DataSource = thucan.LayThucAnTheoLoai(tenLoaiThucAn).Tables[0];
+            cmbmonan.DataSource = thucan.LayThucAnTheoLoai(tenLoaiThucAn);
             cmbmonan.DisplayMember = "TenThucAn";
         }
 
@@ -71,12 +71,13 @@ namespace QuanLyCaPhe
             }
 
             LoadCategory();
-            LoadFoodByCategory(cmbdanhmucmonan.GetItemText(cmbdanhmucmonan.SelectedItem));
+            string tenloaithucan = (cmbdanhmucmonan.SelectedItem as DataRowView).Row.ItemArray[1].ToString();
+            LoadFoodByCategory(tenloaithucan);
         }
 
         private void HienThiHoaDon(int idBan)
         {
-            dgvhoadon.DataSource = chitiethd.LayChiTietHoaDon(idBan).Tables[0];
+            dgvhoadon.DataSource = chitiethd.LayChiTietHoaDon(idBan);
 
             //Tính toán thành tiền
             float TongTien = 0;
@@ -138,7 +139,8 @@ namespace QuanLyCaPhe
 
         private void cmbdanhmucmonan_SelectedIndexChanged(object sender, EventArgs e)
         {
-            LoadFoodByCategory(cmbdanhmucmonan.GetItemText(cmbdanhmucmonan.SelectedItem));
+            string tenloaithucan = (cmbdanhmucmonan.SelectedItem as DataRowView).Row.ItemArray[1].ToString();
+            LoadFoodByCategory(tenloaithucan);
         }
 
         private void menuDangNhap_Click(object sender, EventArgs e)

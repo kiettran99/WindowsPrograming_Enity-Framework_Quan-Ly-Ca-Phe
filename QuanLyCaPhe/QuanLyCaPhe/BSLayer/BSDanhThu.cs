@@ -22,10 +22,30 @@ namespace QuanLyCaPhe.BSLayer
         /// Lấy danh sách danh thu
         /// </summary>
         /// <param name="idBan"></param>
-        public DataSet LayDanhThu(DateTime ngayTaoHoaDon, DateTime ngayKetThucHoaDon)
+        public DataTable LayDanhThu(DateTime ngayTaoHoaDon, DateTime ngayKetThucHoaDon)
         {
-            string strSQL = $"select IDHoaDon, TenBan, NgayTaoHoaDon, NgayKetThucHoaDon, GiamGia,TongTien from HoaDon join BanAn on HoaDon.IDBanAn = BanAn.IDBanAn where HoaDon.TinhTrang = 1 and cast(NgayTaoHoaDon as date) >= '{ngayTaoHoaDon.Year}-{ngayTaoHoaDon.Month}-{ngayTaoHoaDon.Day}' and cast(NgayKetthucHoaDon as Date) <= '{ngayKetThucHoaDon.Year}-{ngayKetThucHoaDon.Month}-{ngayKetThucHoaDon.Day} '";
-            return db.ExecuteQueryDataSet(strSQL, CommandType.Text);
+            QuanLyCaPheEntities qlcp = new QuanLyCaPheEntities();
+
+            var dsDanhThu = from hd in qlcp.HoaDons join ba in qlcp.BanAns on hd.IDBanAn equals ba.IDBanAn
+                            where hd.TinhTrang == true && hd.NgayTaoHoaDon.Day >= ngayTaoHoaDon.Day
+                            && hd.NgayKetThucHoaDon.Value.Day <= ngayKetThucHoaDon.Day
+                            select new { hd.IDHoaDon, ba.TenBan, hd.NgayTaoHoaDon, hd.NgayKetThucHoaDon, hd.GiamGia, hd.TongTien};
+
+            DataTable dt = new DataTable();
+
+            dt.Columns.Add("IDHoaDon");
+            dt.Columns.Add("TenBan");
+            dt.Columns.Add("NgayTaoHoaDon");
+            dt.Columns.Add("NgayKetThucHoaDon");
+            dt.Columns.Add("GiamGia");
+            dt.Columns.Add("TongTien");
+
+            foreach(var danhthu in dsDanhThu)
+            {
+                dt.Rows.Add(danhthu.IDHoaDon, danhthu.TenBan, danhthu.NgayTaoHoaDon, danhthu.NgayKetThucHoaDon, danhthu.GiamGia, danhthu.TongTien);
+            }
+
+            return dt;
         }       
     }
 }
